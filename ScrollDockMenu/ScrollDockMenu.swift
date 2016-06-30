@@ -9,7 +9,7 @@
 import UIKit
 //MARK:- ScrollDockMenuData
 public protocol ScrollDockMenuData {
-	var name: String { get }
+	var name: NSAttributedString { get }
 	var id: String { get }
 	var image: (String?, UIImage?) { get }
 	var tapClosure: (String) -> Void { get }
@@ -117,6 +117,11 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 			cell.contentView.layer.borderColor = nil
 		}
 	}
+
+	func updateFirstCell() {
+		let path = NSIndexPath(forItem: 0, inSection: 0)
+		if indexPathsForVisibleItems().contains(path) { reloadItemsAtIndexPaths([path]) }
+	}
 }
 
 //MARK:- ScrollDockMenuCell
@@ -124,12 +129,17 @@ private final class ScrollDockMenuCell: UICollectionViewCell {
 
 	static let idf = "ScrollDockMenuCell"
 	private var cover = SSDimLayer(opacity: 0.4)
+	private var text = CATextLayer()
 
 	required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder); initialize() }
 	override init(frame: CGRect) { super.init(frame: frame); initialize() }
 
 	private func initialize() {
 		contentView.layer.addSublayer(cover)
+		contentView.layer.addSublayer(text)
+		text.alignmentMode = "center"
+		text.contentsScale = UIScreen.mainScreen().scale
+		cover.contentsScale = UIScreen.mainScreen().scale
 		cover.contentsGravity = kCAGravityResizeAspect
 		contentView.layer.borderWidth = 0.5
 	}
@@ -137,6 +147,12 @@ private final class ScrollDockMenuCell: UICollectionViewCell {
 	func configure(item: ScrollDockMenuData) {
 		if let url = item.image.0 { cover.ss_setImageBy(url) }
 		if let img = item.image.1 { cover.contents = img.CGImage }
+		text.string = item.name
+		let rect = item.name.boundingRectWithSize(contentView.bounds.size, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
+		let size = contentView.bounds.size
+		let x = (size.width - rect.width) / 2
+		let y = (size.height - rect.height) / 2
+		text.frame = CGRectMake(x, y, rect.width, rect.height)
 	}
 
 	private override func layoutSubviews() {

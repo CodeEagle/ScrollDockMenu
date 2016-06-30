@@ -72,7 +72,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
 struct MenuData: ScrollDockMenuData {
 
-	var name: String { return "abc" }
+	var name: NSAttributedString { return NSAttributedString(string: "中文测试") }
 	var id: String = "1"
 	var image: (String?, UIImage?) { return ("https://d13yacurqjgara.cloudfront.net/users/43762/screenshots/2699420/thankful.gif", nil) }
 	var tapClosure: (String) -> Void = {

@@ -64,6 +64,10 @@ public extension UIScrollView {
 		value.setOffset(h, animated: true)
 	}
 
+	public func updateFirstImage(url: String) {
+		manager?.menu?.updateFirstCell()
+	}
+
 }
 
 private final class Manager: NSObject, UIScrollViewDelegate {
