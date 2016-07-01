@@ -6,7 +6,7 @@
 //  Copyright © 2016年 SelfStudio. All rights reserved.
 //
 
-import Foundation
+import UIKit
 //MARK:- LayerOrImageView
 protocol LayerOrImageView: class {
 	var ss_imageFillTarget: (CALayer?, UIImageView?) { get }
@@ -59,7 +59,7 @@ extension LayerOrImageView {
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
 			let request = NSURLRequest(URL: value, cachePolicy: .UseProtocolCachePolicy, timeoutInterval: 20)
 			let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { [weak self](data, _, _) in
-				if let d = data, img = UIImage(data: d), sself = self {
+				if let d = data, img = UIImage(data: d)?.decoded, sself = self {
 					dispatch_async(dispatch_get_main_queue(), { () -> Void in
 						if let layer = sself.ss_imageFillTarget.0 {
 							layer.contents = img.CGImage
@@ -73,5 +73,22 @@ extension LayerOrImageView {
 			task.resume()
 			self._downloadTask = task
 		})
+	}
+}
+
+extension UIImage {
+	var decoded: UIImage {
+		let imageRef = self.CGImage
+		let colorSpace = CGColorSpaceCreateDeviceRGB()
+		let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue
+		let context = CGBitmapContextCreate(nil, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), 8, 0, colorSpace, bitmapInfo)
+		if let context = context {
+			let rect = CGRect(x: 0, y: 0, width: CGImageGetWidth(imageRef), height: CGImageGetHeight(imageRef))
+			CGContextDrawImage(context, rect, imageRef)
+			let decompressedImageRef = CGBitmapContextCreateImage(context)
+			return UIImage(CGImage: decompressedImageRef!, scale: scale, orientation: imageOrientation)
+		} else {
+			return self
+		}
 	}
 }

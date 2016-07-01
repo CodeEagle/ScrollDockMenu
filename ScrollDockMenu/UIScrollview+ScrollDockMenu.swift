@@ -28,6 +28,11 @@ public extension UIScrollView {
 		set(value) { manager?.menu?.datas = value }
 	}
 
+	public var ss_imageContentMode: UIViewContentMode? {
+		get { return manager?.menu?.imageContentMode }
+		set(value) { if let v = value { manager?.menu?.imageContentMode = v } }
+	}
+
 	public func ss_enableScrollDockMenu(underNavigationBar: Bool = true, cellBorderColor: UIColor = UIColor.redColor(), selectedId: String) {
 		guard let value = superview else {
 			assert(false, "scrollView must has superview ")
@@ -68,6 +73,25 @@ public extension UIScrollView {
 		manager?.menu?.updateFirstCell()
 	}
 
+}
+
+extension UIViewContentMode {
+	var caGravityName: String {
+		switch self {
+		case .Center: return kCAGravityCenter
+		case .Bottom: return kCAGravityBottom
+		case .Left: return kCAGravityLeft
+		case .Right: return kCAGravityRight
+		case .TopLeft: return kCAGravityTopLeft
+		case .TopRight: return kCAGravityTopRight
+		case .BottomLeft: return kCAGravityBottomLeft
+		case .BottomRight: return kCAGravityBottomRight
+		case .ScaleToFill: return kCAGravityResize
+		case .ScaleAspectFit: return kCAGravityResizeAspect
+		case .ScaleAspectFill: return kCAGravityResizeAspectFill
+		default: return kCAGravityResizeAspect
+		}
+	}
 }
 
 private final class Manager: NSObject, UIScrollViewDelegate {

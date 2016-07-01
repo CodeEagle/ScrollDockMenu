@@ -19,6 +19,7 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 
 	var cellBorderColor: UIColor? = UIColor.redColor()
 	var selectedId: String = "0"
+	var imageContentMode = UIViewContentMode.ScaleAspectFit
 
 	var datas: [ScrollDockMenuData]? {
 		didSet { reloadData() }
@@ -60,6 +61,7 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 			cell.configure(item)
 			cell.selected = item.id == selectedId
 		}
+		cell.cover.contentsGravity = imageContentMode.caGravityName
 		updateSelected(cell)
 		return cell
 	}
