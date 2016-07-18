@@ -144,6 +144,7 @@ private final class ScrollDockMenuCell: UICollectionViewCell {
 		cover.contentsScale = UIScreen.mainScreen().scale
 		cover.contentsGravity = kCAGravityResizeAspect
 		contentView.layer.borderWidth = 0.5
+		contentView.clipsToBounds = true
 	}
 
 	func configure(item: ScrollDockMenuData) {
