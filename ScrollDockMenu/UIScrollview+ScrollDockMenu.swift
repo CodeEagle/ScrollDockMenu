@@ -64,13 +64,13 @@ public extension UIScrollView {
 
 	public func toggleMenu() {
 		guard let value = manager, hh = manager?.menu?.frame.size.height else { return }
-		let h: CGFloat = value.opening ? -hh : 64
+		let h: CGFloat = value.opening ? 0 - hh: 64
 		value.isManualOpening = true
 		value.setOffset(h, animated: true)
 	}
 
-	public func updateFirstImage() {
-		manager?.menu?.updateFirstCell()
+	public func updateFirstImage(with datas: [ScrollDockMenuData]) {
+		manager?.menu?.updateFirstCell(data: datas)
 	}
 
 }

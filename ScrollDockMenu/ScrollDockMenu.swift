@@ -22,9 +22,10 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 	var imageContentMode = UIViewContentMode.ScaleAspectFit
 
 	var datas: [ScrollDockMenuData]? {
-		didSet { reloadData() }
+		didSet { if reloadAll { reloadData() } }
 	}
 
+	private var reloadAll = true
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
@@ -120,9 +121,12 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 		}
 	}
 
-	func updateFirstCell() {
+	func updateFirstCell(data list: [ScrollDockMenuData]) {
+		reloadAll = false
+		datas = list
 		let path = NSIndexPath(forItem: 0, inSection: 0)
 		if indexPathsForVisibleItems().contains(path) { reloadItemsAtIndexPaths([path]) }
+		reloadAll = true
 	}
 }
 
