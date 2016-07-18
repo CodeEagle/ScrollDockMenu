@@ -12,25 +12,31 @@ import ScrollDockMenu
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
 	let sc = UITableView(frame: CGRectZero, style: .Plain)
+    let co: UICollectionView = {
+        let l = UICollectionViewFlowLayout()
+        l.scrollDirection = .Vertical
+       return UICollectionView(frame: CGRectZero, collectionViewLayout: l)
+    }()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		sc.translatesAutoresizingMaskIntoConstraints = false
+        co.alwaysBounceVertical = true
+		co.translatesAutoresizingMaskIntoConstraints = false
 		automaticallyAdjustsScrollViewInsets = false
-		view.addSubview(sc)
-		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": sc]))
-		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": sc]))
-		sc.ss_enableScrollDockMenu(selectedId: "0")
-		sc.dataSource = self
-		sc.delegate = self
-		sc.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+		view.addSubview(co)
+		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
+		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
+		co.ss_enableScrollDockMenu(selectedId: "0")
+//		sc.dataSource = self
+//		sc.delegate = self
+//		sc.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
 		var datas = [ScrollDockMenuData]()
 		for i in 0...10 {
 			var d = MenuData()
 			d.id = "\(i)"
 			datas.append(d)
 		}
-		sc.ss_dataList = datas
+		co.ss_dataList = datas
 		// Do any additional setup after loading the view, typically from a nib.
 	}
 
