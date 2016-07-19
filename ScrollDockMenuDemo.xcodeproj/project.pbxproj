@@ -144,11 +144,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 16FDD6F31D1CE41D00A80B3D /* Build configuration list for PBXNativeTarget "ScrollDockMenuDemo" */;
 			buildPhases = (
-				16B674B61D1D3BDA00610E50 /* Carthage */,
 				16FDD6DD1D1CE41D00A80B3D /* Sources */,
 				16FDD6DE1D1CE41D00A80B3D /* Frameworks */,
 				16FDD6DF1D1CE41D00A80B3D /* Resources */,
 				16FDD7071D1CE42B00A80B3D /* Embed Frameworks */,
+				1626B23F1D3DCEBC006661BD /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -164,7 +164,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 16FDD7041D1CE42B00A80B3D /* Build configuration list for PBXNativeTarget "ScrollDockMenu" */;
 			buildPhases = (
-				16B674B51D1D3BBE00610E50 /* Carthage */,
 				16FDD6F61D1CE42B00A80B3D /* Sources */,
 				16FDD6F71D1CE42B00A80B3D /* Frameworks */,
 				16FDD6F81D1CE42B00A80B3D /* Headers */,
@@ -237,7 +236,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		16B674B51D1D3BBE00610E50 /* Carthage */ = {
+		1626B23F1D3DCEBC006661BD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -245,22 +244,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/KVOBlock.framework",
 			);
-			name = Carthage;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-		16B674B61D1D3BDA00610E50 /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/KVOBlock.framework",
-			);
-			name = Carthage;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
