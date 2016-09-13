@@ -14,7 +14,7 @@ private struct AssociatedKeys {
 }
 public extension UIScrollView {
 
-	private var manager: Manager? {
+	fileprivate var manager: Manager? {
 		get { return objc_getAssociatedObject(self, &AssociatedKeys.Manager) as? Manager }
 		set(val) {
 			objc_setAssociatedObject(self, &AssociatedKeys.Manager, val, .OBJC_ASSOCIATION_RETAIN)
@@ -33,7 +33,7 @@ public extension UIScrollView {
 		set(value) { if let v = value { manager?.menu?.imageContentMode = v } }
 	}
 
-	public func ss_enableScrollDockMenu(underNavigationBar: Bool = true, cellBorderColor: UIColor = UIColor.redColor(), selectedId: String) {
+	public func ss_enableScrollDockMenu(_ underNavigationBar: Bool = true, cellBorderColor: UIColor = UIColor.red, selectedId: String) {
 		guard let value = superview else {
 			assert(false, "scrollView must has superview ")
 			return
@@ -46,16 +46,16 @@ public extension UIScrollView {
 		menu.cellBorderColor = cellBorderColor
 		manager?.menu = menu
 		manager?.sc = self
-		let w = Int(CGRectGetWidth(frame))
-		let h = CGRectGetHeight(menu.frame)
-		let ih = Int(CGRectGetHeight(menu.frame))
+		let w = Int(frame.width)
+		let h = menu.frame.height
+		let ih = Int(menu.frame.height)
 		let y = underNavigationBar ? 64 : 0
 		contentInset.top = underNavigationBar ? (h + 64) : (h)
 		scrollIndicatorInsets.top = contentInset.top
-		value.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[menu(\(w))]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["menu": menu]))
-		value.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-\(y)-[menu(\(ih))]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["menu": menu]))
+		value.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[menu(\(w))]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["menu": menu]))
+		value.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-\(y)-[menu(\(ih))]", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["menu": menu]))
 		observeKeyPath("contentOffset") { [weak self](target, _, _) in
-			guard let sself = self, value = target as? UIScrollView else { return }
+			guard let sself = self, let value = target as? UIScrollView else { return }
 			if sself.manager?.isManualOpening == true { return }
 			self?.manager?.dealWithScroll(value)
 		}
@@ -63,7 +63,7 @@ public extension UIScrollView {
 	}
 
 	public func toggleMenu() {
-		guard let value = manager, hh = manager?.menu?.frame.size.height else { return }
+		guard let value = manager, let hh = manager?.menu?.frame.size.height else { return }
 		let h: CGFloat = value.opening ? 0 - hh: 64
 		value.isManualOpening = true
 		value.setOffset(h, animated: true)
@@ -78,17 +78,17 @@ public extension UIScrollView {
 extension UIViewContentMode {
 	var caGravityName: String {
 		switch self {
-		case .Center: return kCAGravityCenter
-		case .Bottom: return kCAGravityBottom
-		case .Left: return kCAGravityLeft
-		case .Right: return kCAGravityRight
-		case .TopLeft: return kCAGravityTopLeft
-		case .TopRight: return kCAGravityTopRight
-		case .BottomLeft: return kCAGravityBottomLeft
-		case .BottomRight: return kCAGravityBottomRight
-		case .ScaleToFill: return kCAGravityResize
-		case .ScaleAspectFit: return kCAGravityResizeAspect
-		case .ScaleAspectFill: return kCAGravityResizeAspectFill
+		case .center: return kCAGravityCenter
+		case .bottom: return kCAGravityBottom
+		case .left: return kCAGravityLeft
+		case .right: return kCAGravityRight
+		case .topLeft: return kCAGravityTopLeft
+		case .topRight: return kCAGravityTopRight
+		case .bottomLeft: return kCAGravityBottomLeft
+		case .bottomRight: return kCAGravityBottomRight
+		case .scaleToFill: return kCAGravityResize
+		case .scaleAspectFit: return kCAGravityResizeAspect
+		case .scaleAspectFill: return kCAGravityResizeAspectFill
 		default: return kCAGravityResizeAspect
 		}
 	}
@@ -103,49 +103,49 @@ private final class Manager: NSObject, UIScrollViewDelegate {
 	var scrolling = false {
 		didSet { if !scrolling { isManualOpening = false } }
 	}
-	var lastOffset = CGPointZero
+	var lastOffset = CGPoint.zero
 	var opening = true
 
-	private func dealWithScroll(scrollView: UIScrollView) {
+	fileprivate func dealWithScroll(_ scrollView: UIScrollView) {
 		if isManualOpening { return }
 		guard let value = menu else { return }
-		var offset = (-scrollView.contentOffset.y) - (value.frame.height ?? 0)
+		var offset = (-scrollView.contentOffset.y) - value.frame.height
 		var animated = false
 		if offset > 64 { offset = 64 }
 		else if offset < -72 { animated = true }
 		setOffset(offset, animated: animated)
 	}
 
-	private func setOffset(offset: CGFloat, animated: Bool = false) {
-		guard let value = menu, scrollview = sc else { return }
+	fileprivate func setOffset(_ offset: CGFloat, animated: Bool = false) {
+		guard let value = menu, let scrollview = sc else { return }
 		opening = value.frame.origin.y >= 0
 		if let constraints = value.superview?.constraints {
 			for c in constraints {
-				if c.firstItem is ScrollDockMenu && c.firstAttribute == .Top {
+				if c.firstItem is ScrollDockMenu && c.firstAttribute == .top {
 					value.superview?.removeConstraint(c)
 					break
 				}
 			}
 		}
-		let constriant = NSLayoutConstraint(item: value, attribute: .Top, relatedBy: .Equal, toItem: value.superview, attribute: .Top, multiplier: 1, constant: offset)
+		let constriant = NSLayoutConstraint(item: value, attribute: .top, relatedBy: .equal, toItem: value.superview, attribute: .top, multiplier: 1, constant: offset)
 		value.superview?.addConstraint(constriant)
 		if animated {
-			let standrY = -64 - CGRectGetHeight(value.frame)
+			let standrY = -64 - value.frame.height
 			let scY = scrollview.contentOffset.y
-			UIView.animateWithDuration(0.2,
+			UIView.animate(withDuration: 0.2,
 				animations: {
 					value.superview?.layoutIfNeeded()
 					if self.opening == false {
 						if scY == standrY {
-							scrollview.setContentOffset(CGPointMake(0, -64), animated: false)
+							scrollview.setContentOffset(CGPoint(x: 0, y: -64), animated: false)
 						} else if scY == -64 {
-							scrollview.setContentOffset(CGPointMake(0, standrY), animated: false)
+							scrollview.setContentOffset(CGPoint(x: 0, y: standrY), animated: false)
 						}
 					} else {
 						if scY == -64 {
-							scrollview.setContentOffset(CGPointMake(0, standrY), animated: false)
+							scrollview.setContentOffset(CGPoint(x: 0, y: standrY), animated: false)
 						} else if scY <= -64 {
-							scrollview.setContentOffset(CGPointMake(0, -64), animated: false)
+							scrollview.setContentOffset(CGPoint(x: 0, y: -64), animated: false)
 						}
 					}
 				},
@@ -161,7 +161,7 @@ private final class Manager: NSObject, UIScrollViewDelegate {
 		} else { if isManualOpening != false { isManualOpening = false } }
 	}
 
-	@objc private func scrollDetech() {
+	@objc fileprivate func scrollDetech() {
 		guard let value = sc else { return }
 		if lastOffset != value.contentOffset {
 			lastOffset = value.contentOffset
@@ -170,11 +170,10 @@ private final class Manager: NSObject, UIScrollViewDelegate {
 		} else { if scrolling != false { scrolling = false } }
 	}
 
-	private func initTimer() {
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) { [weak self]() -> Void in
-			self?.scrollDetech()
-			self?.initTimer()
-		}
-
+	fileprivate func initTimer() {
+        DispatchQueue.global(qos: .default).asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) { [weak self] in
+            self?.scrollDetech()
+            self?.initTimer()
+        }
 	}
 }

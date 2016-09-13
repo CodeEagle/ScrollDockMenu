@@ -11,21 +11,22 @@ import ScrollDockMenu
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-	let sc = UITableView(frame: CGRectZero, style: .Plain)
+	let sc = UITableView(frame: CGRect.zero, style: .plain)
     let co: UICollectionView = {
         let l = UICollectionViewFlowLayout()
-        l.scrollDirection = .Vertical
-       return UICollectionView(frame: CGRectZero, collectionViewLayout: l)
+        l.scrollDirection = .vertical
+       return UICollectionView(frame: CGRect.zero, collectionViewLayout: l)
     }()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        co.backgroundColor = UIColor.white
         co.alwaysBounceVertical = true
 		co.translatesAutoresizingMaskIntoConstraints = false
 		automaticallyAdjustsScrollViewInsets = false
 		view.addSubview(co)
-		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
-		view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
+		view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
+		view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[sc]-0-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["sc": co]))
 		co.ss_enableScrollDockMenu(selectedId: "0")
 //		sc.dataSource = self
 //		sc.delegate = self
@@ -47,32 +48,32 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
 	// MARK: UITableViewDataSource
 
-	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
 
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 30
 	}
 
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as UITableViewCell
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
 		configureCell(cell, forRowAtIndexPath: indexPath)
 		return cell
 	}
 
-	func configureCell(cell: UITableViewCell, forRowAtIndexPath: NSIndexPath) {
-		cell.textLabel?.text = "\(forRowAtIndexPath.row)"
+	func configureCell(_ cell: UITableViewCell, forRowAtIndexPath: IndexPath) {
+		cell.textLabel?.text = "\((forRowAtIndexPath as NSIndexPath).row)"
 	}
 
 	// MARK: UITableViewDelegate
 
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		print("didTap:\(indexPath)")
 	}
 
-	@IBAction func toggle(sender: AnyObject) {
-		sc.toggleMenu()
+	@IBAction func toggle(_ sender: AnyObject) {
+		co.toggleMenu()
 	}
 }
 

@@ -17,15 +17,15 @@ public protocol ScrollDockMenuData {
 //MARK:- ScrollDockMenu
 final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
-	var cellBorderColor: UIColor? = UIColor.redColor()
+	var cellBorderColor: UIColor? = UIColor.red
 	var selectedId: String = "0"
-	var imageContentMode = UIViewContentMode.ScaleAspectFit
+	var imageContentMode = UIViewContentMode.scaleAspectFit
 
 	var datas: [ScrollDockMenuData]? {
 		didSet { if reloadAll { reloadData() } }
 	}
 
-	private var reloadAll = true
+	fileprivate var reloadAll = true
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
@@ -36,31 +36,31 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 
 	convenience init() {
 		let layout = UICollectionViewFlowLayout()
-		layout.scrollDirection = .Horizontal
-		self.init(frame: CGRectMake(0, 0, 72, 72), collectionViewLayout: layout)
-		registerClass(ScrollDockMenuCell.self, forCellWithReuseIdentifier: ScrollDockMenuCell.idf)
+		layout.scrollDirection = .horizontal
+		self.init(frame: CGRect(x: 0, y: 0, width: 72, height: 72), collectionViewLayout: layout)
+		register(ScrollDockMenuCell.self, forCellWithReuseIdentifier: ScrollDockMenuCell.idf)
 		dataSource = self
 		delegate = self
 		scrollsToTop = false
-		backgroundColor = UIColor.whiteColor()
+		backgroundColor = UIColor.white
 		translatesAutoresizingMaskIntoConstraints = false
 		showsHorizontalScrollIndicator = false
 	}
 
 	// MARK: UICollectionViewDataSource
-	func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+	func numberOfSections(in collectionView: UICollectionView) -> Int {
 		return 1
 	}
 
-	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return datas?.count ?? 0
 	}
 
-	func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-		let cell = collectionView.dequeueReusableCellWithReuseIdentifier(ScrollDockMenuCell.idf, forIndexPath: indexPath) as! ScrollDockMenuCell
-		if let item = datas?[safe: indexPath.item] {
+	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrollDockMenuCell.idf, for: indexPath) as! ScrollDockMenuCell
+		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
 			cell.configure(item)
-			cell.selected = item.id == selectedId
+			cell.isSelected = item.id == selectedId
 		}
 		cell.cover.contentsGravity = imageContentMode.caGravityName
 		updateSelected(cell)
@@ -69,52 +69,52 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 
 	// MARK: UICollectionViewDelegateFlowLayout
 
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
 		return UIEdgeInsetsMake(6, 6, 6, 6)
 	}
 
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
 		return 6
 	}
 
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 		return 6
 	}
 
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-		return CGSizeMake(60, 60)
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		return CGSize(width: 60, height: 60)
 	}
 
 	// MARK:- UICollectionViewDelegate
-	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-		if let item = datas?[safe: indexPath.item] {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
 			selectedId = item.id
 			item.tapClosure(selectedId)
 		}
-		if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
+		if let cell = collectionView.cellForItem(at: indexPath) {
 			updateSelected(cell)
 		}
 	}
 
-	func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-		if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
-			cell.selected = false
+	func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+		if let cell = collectionView.cellForItem(at: indexPath) {
+			cell.isSelected = false
 			updateSelected(cell)
 		}
 	}
 
-	func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-		if let item = datas?[safe: indexPath.item] {
+	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
 			if item.id == selectedId {
-				collectionView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
+				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionViewScrollPosition())
 			}
 		}
 	}
 
-	private func updateSelected(cell: UICollectionViewCell) {
-		if cell.selected {
+	fileprivate func updateSelected(_ cell: UICollectionViewCell) {
+		if cell.isSelected {
 			cell.contentView.layer.borderWidth = 0.5
-			cell.contentView.layer.borderColor = cellBorderColor?.CGColor
+			cell.contentView.layer.borderColor = cellBorderColor?.cgColor
 		} else {
 			cell.contentView.layer.borderWidth = 0
 			cell.contentView.layer.borderColor = nil
@@ -124,8 +124,8 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 	func updateFirstCell(data list: [ScrollDockMenuData]) {
 		reloadAll = false
 		datas = list
-		let path = NSIndexPath(forItem: 0, inSection: 0)
-		if indexPathsForVisibleItems().contains(path) { reloadItemsAtIndexPaths([path]) }
+		let path = IndexPath(item: 0, section: 0)
+		if indexPathsForVisibleItems.contains(path) { reloadItems(at: [path]) }
 		reloadAll = true
 	}
 }
@@ -134,42 +134,42 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 private final class ScrollDockMenuCell: UICollectionViewCell {
 
 	static let idf = "ScrollDockMenuCell"
-	private var cover = SSDimLayer(opacity: 0.4)
-	private var text = CATextLayer()
+	fileprivate var cover = SSDimLayer(opacity: 0.4)
+	fileprivate var text = CATextLayer()
 
 	required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder); initialize() }
 	override init(frame: CGRect) { super.init(frame: frame); initialize() }
 
-	private func initialize() {
+	fileprivate func initialize() {
 		contentView.layer.addSublayer(cover)
 		contentView.layer.addSublayer(text)
 		text.alignmentMode = "center"
-		text.contentsScale = UIScreen.mainScreen().scale
-		cover.contentsScale = UIScreen.mainScreen().scale
+		text.contentsScale = UIScreen.main.scale
+		cover.contentsScale = UIScreen.main.scale
 		cover.contentsGravity = kCAGravityResizeAspect
 		contentView.layer.borderWidth = 0.5
 		contentView.clipsToBounds = true
 	}
 
-	func configure(item: ScrollDockMenuData) {
+	func configure(_ item: ScrollDockMenuData) {
 		if let url = item.image.0 { cover.ss_setImageBy(url) }
-		if let img = item.image.1 { cover.contents = img.CGImage }
+		if let img = item.image.1 { cover.contents = img.cgImage }
 		text.string = item.name
-		let rect = item.name.boundingRectWithSize(contentView.bounds.size, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
+		let rect = item.name.boundingRect(with: contentView.bounds.size, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
 		let size = contentView.bounds.size
 		let x = (size.width - rect.width) / 2
 		let y = (size.height - rect.height) / 2
-		text.frame = CGRectMake(x, y, rect.width, rect.height)
+		text.frame = CGRect(x: x, y: y, width: rect.width, height: rect.height)
 	}
 
-	private override func layoutSubviews() {
+	fileprivate override func layoutSubviews() {
 		super.layoutSubviews()
 		cover.frame = contentView.bounds
 	}
 }
 private final class SSDimLayer: CALayer {
 
-	private lazy var _dimLayer = CALayer()
+	fileprivate lazy var _dimLayer = CALayer()
 
 	init(opacity: Float) {
 		super.init()
@@ -178,17 +178,17 @@ private final class SSDimLayer: CALayer {
 
 	override init() { super.init() }
 
-	override init(layer: AnyObject) { super.init(layer: layer) }
+	override init(layer: Any) { super.init(layer: layer) }
 
 	required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
 
-	private func setup(alpha: Float) {
-		_dimLayer.backgroundColor = UIColor.blackColor().CGColor
+	fileprivate func setup(_ alpha: Float) {
+		_dimLayer.backgroundColor = UIColor.black.cgColor
 		_dimLayer.opacity = alpha
-		_dimLayer.opaque = false
+		_dimLayer.isOpaque = false
 		addSublayer(_dimLayer)
-		opaque = true
-		contentsScale = UIScreen.mainScreen().scale
+		isOpaque = true
+		contentsScale = UIScreen.main.scale
 	}
 
 	override func layoutSublayers() {
