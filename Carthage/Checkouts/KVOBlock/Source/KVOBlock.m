@@ -49,7 +49,20 @@
     observer.beObserver = self;
     observer.observationBlock = observationBlock;
     [self addObserver:observer forKeyPath:keyPath options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:nil];
-    [self.associateObserverBlockArray addObject:observer];
+    NSDictionary * dict = @{@"keyPath" : observer};
+    [self.associateObserverBlockArray addObject:dict];
+}
+
+- (void)removeObserverFor:(NSString *)keyPath {
+    NSUInteger count = self.associateObserverBlockArray.count;
+    for (NSUInteger i = 0; i < count; i++) {
+        NSDictionary* item = self.associateObserverBlockArray[i];
+        NSString *key = [item allKeys].firstObject;
+        if ([key isEqualToString: keyPath] ) {
+            [self.associateObserverBlockArray removeObjectAtIndex:i];
+            break;
+        }
+    }
 }
 
 - (NSMutableArray *)associateObserverBlockArray

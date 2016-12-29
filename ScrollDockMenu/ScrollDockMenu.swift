@@ -15,18 +15,20 @@ public protocol ScrollDockMenuData {
 	var tapClosure: (String) -> Void { get }
 }
 //MARK:- ScrollDockMenu
-final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+public final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
 	var cellBorderColor: UIColor? = UIColor.red
 	var selectedId: String = "0"
 	var imageContentMode = UIViewContentMode.scaleAspectFit
+    public var cellBackgroundColor: UIColor = .white
+    public var cellEnableDim: Bool = true
 
 	var datas: [ScrollDockMenuData]? {
 		didSet { if reloadAll { reloadData() } }
 	}
 
 	fileprivate var reloadAll = true
-	required init?(coder aDecoder: NSCoder) {
+	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
 
@@ -48,19 +50,21 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 	}
 
 	// MARK: UICollectionViewDataSource
-	func numberOfSections(in collectionView: UICollectionView) -> Int {
+	public func numberOfSections(in collectionView: UICollectionView) -> Int {
 		return 1
 	}
 
-	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+	public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return datas?.count ?? 0
 	}
 
-	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+	public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrollDockMenuCell.idf, for: indexPath) as! ScrollDockMenuCell
-		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
+		if let item = datas?[safe: indexPath.item] {
 			cell.configure(item)
 			cell.isSelected = item.id == selectedId
+            cell.cover.isHidden = !cellEnableDim
+            cell.contentView.backgroundColor = cellBackgroundColor
 		}
 		cell.cover.contentsGravity = imageContentMode.caGravityName
 		updateSelected(cell)
@@ -69,24 +73,24 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 
 	// MARK: UICollectionViewDelegateFlowLayout
 
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
 		return UIEdgeInsetsMake(6, 6, 6, 6)
 	}
 
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
 		return 6
 	}
 
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 		return 6
 	}
 
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		return CGSize(width: 60, height: 60)
 	}
 
 	// MARK:- UICollectionViewDelegate
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+	public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
 			selectedId = item.id
 			item.tapClosure(selectedId)
@@ -96,14 +100,14 @@ final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource, UIColl
 		}
 	}
 
-	func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+	public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
 		if let cell = collectionView.cellForItem(at: indexPath) {
 			cell.isSelected = false
 			updateSelected(cell)
 		}
 	}
 
-	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+	public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
 		if let item = datas?[safe: (indexPath as NSIndexPath).item] {
 			if item.id == selectedId {
 				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionViewScrollPosition())

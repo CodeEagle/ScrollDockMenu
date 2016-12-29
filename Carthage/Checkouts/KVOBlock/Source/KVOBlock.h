@@ -12,7 +12,7 @@ FOUNDATION_EXPORT double KVOBlockVersionNumber;
 //! Project version string for KVOBlock.
 FOUNDATION_EXPORT const unsigned char KVOBlockVersionString[];
 
-typedef void(^KVOBlockChange) (__weak id self, id old, id newVal);
+typedef void(^KVOBlockChange) (__weak __nullable id self, __nullable id old, __nullable id newVal);
 
 @interface NSObject (KVOBlock)
 /**
@@ -21,6 +21,6 @@ typedef void(^KVOBlockChange) (__weak id self, id old, id newVal);
  *  @param keyPath          keypath
  *  @param observationBlock three object (observingTarget, oldValue, newValue)
  */
-- (void)observeKeyPath:(NSString *)keyPath withBlock:(KVOBlockChange)observationBlock;
-
+- (void)observeKeyPath:(nonnull NSString*)keyPath withBlock:(nonnull KVOBlockChange)observationBlock;
+- (void)removeObserverFor:(nonnull NSString*)keyPath;
 @end

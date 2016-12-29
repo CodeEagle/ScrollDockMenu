@@ -21,7 +21,7 @@ public extension UIScrollView {
 		}
 	}
 
-	public var ss_menuView: UICollectionView? { return manager?.menu }
+	public var ss_menuView: ScrollDockMenu? { return manager?.menu }
 
 	public var ss_dataList: [ScrollDockMenuData]? {
 		get { return manager?.menu?.datas }
