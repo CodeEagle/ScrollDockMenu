@@ -39,7 +39,7 @@ public final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource,
 	convenience init() {
 		let layout = UICollectionViewFlowLayout()
 		layout.scrollDirection = .horizontal
-		self.init(frame: CGRect(x: 0, y: 0, width: 72, height: 72), collectionViewLayout: layout)
+		self.init(frame: CGRect(x: 0, y: 0, width: 72, height: 92), collectionViewLayout: layout)
 		register(ScrollDockMenuCell.self, forCellWithReuseIdentifier: ScrollDockMenuCell.idf)
 		dataSource = self
 		delegate = self
@@ -86,7 +86,7 @@ public final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource,
 	}
 
 	public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		return CGSize(width: 60, height: 60)
+		return CGSize(width: 90, height: 70)
 	}
 
 	// MARK:- UICollectionViewDelegate
