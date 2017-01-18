@@ -112,6 +112,7 @@ public final class ScrollDockMenu: UICollectionView, UICollectionViewDataSource,
 			if item.id == selectedId {
 				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionViewScrollPosition())
 			}
+            updateSelected(cell)
 		}
 	}
 
